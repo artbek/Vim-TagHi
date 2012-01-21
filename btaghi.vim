@@ -1,35 +1,38 @@
 function! HiTag()
+
 	" save cursor position
 	let l:saved_cursor_pos = getpos(".")
 
-	let l:start_tag = []
+	let l:opening_tag = []
+	" go to opening tag
 	execute("normal! yat")
-	call add(start_tag, getpos(".")[2])
-	call add(start_tag, getpos(".")[1])
-
+	" get position of brackets < >
+	call add(opening_tag, getpos(".")[2])
+	call add(opening_tag, getpos(".")[1])
 	execute("normal! f>")
-	call add(start_tag, getpos(".")[2])
-	call add(start_tag, getpos(".")[1])
+	call add(opening_tag, getpos(".")[2])
+	call add(opening_tag, getpos(".")[1])
 
-
-	let l:end_tag = []
+	let l:closing_tag = []
+	" go to closing tag
 	execute("normal! vat\e")
-
+	" get position of bracket < >
 	execute("normal! F<")
-	call add(end_tag, getpos(".")[2])
-	call add(end_tag, getpos(".")[1])
-
+	call add(closing_tag, getpos(".")[2])
+	call add(closing_tag, getpos(".")[1])
 	execute("normal! f>")
-	call add(end_tag, getpos(".")[2])
-	call add(end_tag, getpos(".")[1])
+	call add(closing_tag, getpos(".")[2])
+	call add(closing_tag, getpos(".")[1])
 
-	"echo start_tag
-	"echo end_tag
-
+	"echo opening_tag
+	"echo closing_tag
+	
+	" clear previous highlights
 	call clearmatches()
+	" highlight using the brackets' position data
 	highlight TagHi guifg=#ffff00 
-	call matchadd("TagHi", "\\%" . start_tag[1] . "l\\%>" . (start_tag[0]-1) . "c\\%<" . (start_tag[2]+1) . "c")
-	call matchadd("TagHi", "\\%" . end_tag[1] . "l\\%>" . (end_tag[0]-1) . "c\\%<" . (end_tag[2]+1) . "c")
+	call matchadd("TagHi", "\\%" . opening_tag[1] . "l\\%>" . (opening_tag[0]-1) . "c\\%<" . (opening_tag[2]+1) . "c")
+	call matchadd("TagHi", "\\%" . closing_tag[1] . "l\\%>" . (closing_tag[0]-1) . "c\\%<" . (closing_tag[2]+1) . "c")
 
 	" restore cursor position
 	call setpos(".", l:saved_cursor_pos)
